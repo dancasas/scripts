@@ -10,7 +10,7 @@
 # See: http://blender.stackexchange.com/questions/24133/modify-obj-after-import-using-python
 # and: http://blenderartists.org/forum/showthread.php?320309-How-to-import-ply-files-from-script
 import bpy
-
+import numpy
 
 SEQUENCE_TO_PROCESS = "Surrey_stepdown"
 #SEQUENCE_TO_PROCESS = "Helge_Unicampus"
@@ -27,15 +27,15 @@ if(SEQUENCE_TO_PROCESS == "Surrey_stepdown"):
 	#
 	#################################################
 	# Folder without ending "\\".
-	meshFolder="/media/dan/data1/tmp/rigging/04/meshes_SMPL_30fps"
+	meshFolder="/tmp/50002/test_PCA050"
 	
 	# baseline Mesh folder
-	meshFolder_baseline = "/tmp/rigged_fixed15"
+	meshFolder_baseline = "/media/dan/data1/tmp/SMPL/results/2017_12_12/50002_autoencoder_results/eval_on_running_on_spot2/linear_100/gt/"
 	
 	# Output folder (without ending "\\").
 	#renderFolder = "D:\\dev\\skeletool\\results\\surrey_stepdown\\test012_20-50_20160614172508_rig000.00_lap0.001000_opt01_itr1000_fus0.00_stepdown_io_std10_white_depth8___\\tesselated" 
 	#renderFolder="D:\\dev\\skeletool\\results\\surrey_stepdown\\big_hands_20160619173028_rig000.00_lap0.001000_opt01_itr1500_fus0.00_stepdown_io_std10_white_depth8___\\tesselated\\color_with_occlusions"
-	renderFolder="/media/dan/data1/tmp/rigging/04/render_meshes_SMPL_30fps"
+	renderFolder="/tmp/50002/test_PCA050"
 	
 	# Material name for the imported object. The Material already needs to be created.
 	materialName = ""
@@ -57,160 +57,57 @@ if(SEQUENCE_TO_PROCESS == "Surrey_stepdown"):
 		# Base name for the output PNG frames
 		imageFrameBaseName = "rigging_SMPL_."
 	
-elif(SEQUENCE_TO_PROCESS == "Helge_Unicampus"):
-	################################################
-	#
-	# Helge Unicampus settings
-	#
-	#################################################
-	# Folder without ending "\\".
-	#meshFolder = "D:\\dev\\skeletool\\results\\helge_unibus\\20160619164309_rig000.00_lap0.025000_opt01_itr1500_fus0.05_helge_unibus_o_std10_white_depth8___\\tesselated\\renum_tesseleted_ply"
-	#meshFolder = "D:\\dev\\skeletool\\results\\helge_unibus\\20160619164309_rig000.00_lap0.025000_opt01_itr1500_fus0.05_helge_unibus_o_std10_white_depth8___\\tesselated_hand_fixed\\renum_recolor\\ply"
-	meshFolder = "D:\\dev\\skeletool\\results\\helge_unibus\\20160619164309_rig000.00_lap0.025000_opt01_itr1500_fus0.05_helge_unibus_o_std10_white_depth8___\\tesselated_hand_fixed\\ply_smoothed_tesselated_color\\renum"
-	# baseline Mesh folder
-	meshFolder_baseline = "D:\\dev\\skeletool\\results\\helge_unibus\\baseline\\tesselated\\renum"  
-	# Output folder (without ending "\\").
-	#renderFolder = "D:\\dev\\skeletool\\results\\helge_unibus\\20160619164309_rig000.00_lap0.025000_opt01_itr1500_fus0.05_helge_unibus_o_std10_white_depth8___\\tesselated\\renum_tesseleted_ply"
-	#renderFolder = "D:\\dev\\skeletool\\results\\helge_unibus\\20160619164309_rig000.00_lap0.025000_opt01_itr1500_fus0.05_helge_unibus_o_std10_white_depth8___\\tesselated_hand_fixed\\renum_recolor\\ply"
-	renderFolder  = "D:\\dev\\skeletool\\results\\helge_unibus\\20160619164309_rig000.00_lap0.025000_opt01_itr1500_fus0.05_helge_unibus_o_std10_white_depth8___\\tesselated_hand_fixed\\ply_smoothed_tesselated_color\\renum"
-	# Material name for the imported object. The Material already needs to be created.
-	materialName = ""
-	# Amount of numbers in filepath, e.g., 000010.ply
-	AmountOfNumbers = 4 
-	# If we want to smooth + smooth shading in the mesh
-	MESH_SMOOTHING = True
-	# If show vertex color or geometry
-	USE_VERTEX_COLOR = False
-	# If render baseline
-	RENDER_BASELINE = False
-	
-	RENDER_REFINED = True
-	
-	imageFrameBaseName = "not_set"
-	if(RENDER_BASELINE):
-		# Base name for the output PNG frames
-		imageFrameBaseName = "mesh_baseline."
-	else:
-		# Base name for the output PNG frames
-		imageFrameBaseName = "mesh_color."
-	
-elif(SEQUENCE_TO_PROCESS == "Helge_Unicampus_smooth"):
-	# Folder without ending "\\".
-	meshFolder = "D:\\dev\\skeletool\\results\\helge_unibus\\20160619164309_rig000.00_lap0.025000_opt01_itr1500_fus0.05_helge_unibus_o_std10_white_depth8___\\tesselated_hand_fixed\\renum\\smoothed"
-	# baseline Mesh folder
-	meshFolder_baseline = "D:\\dev\\skeletool\\results\\helge_unibus\\baseline\\original_hand_fix\\ply_renum_smoothed" 
-	# Output folder (without ending "\\").
-	renderFolder = "D:\\dev\\skeletool\\results\\helge_unibus\\baseline\\original_hand_fix\\ply_renum_smoothed"
-	# Material name for the imported object. The Material already needs to be created.
-	materialName = ""
-	# Amount of numbers in filepath, e.g., 000010.ply
-	AmountOfNumbers = 4 
-	# If we want to smooth + smooth shading in the mesh
-	MESH_SMOOTHING = True
-	# If show vertex color or geometry
-	USE_VERTEX_COLOR = False
-	# If render baseline
-	RENDER_BASELINE = False
-	RENDER_REFINED = True
-	
-	imageFrameBaseName = "not_set"
-	if(RENDER_BASELINE):
-		# Base name for the output PNG frames
-		imageFrameBaseName = "mesh_baseline."
-	else:
-		# Base name for the output PNG frames
-		imageFrameBaseName = "mesh_smooth_shading."
-
-
-elif(SEQUENCE_TO_PROCESS == "Pablo"):
-	# Folder without ending "\\".
-	#meshFolder = "D:\\dev\\skeletool\\results\\pablo_stretching\\20160628164245_rig100.00_lap0.045000_opt01_itr1500_fus0.05_pablo_stretching_o_std10_white_depth8___\\to_render\\ply_smoothed"
-	meshFolder = "D:\\dev\\skeletool\\results\\pablo_stretching\\20160628164245_rig100.00_lap0.045000_opt01_itr1500_fus0.05_pablo_stretching_o_std10_white_depth8___\\to_render\\ply_smoothed_tesselated_color"
-	# baseline Mesh folder
-	meshFolder_baseline = "D:\\dev\\skeletool\\results\\pablo_stretching\\baseline\\ply_smoothed" 
-	# Output folder (without ending "\\").
-	#renderFolder = "D:\\dev\\skeletool\\results\\pablo_stretching\\baseline\\ply_smoothed"
-	#renderFolder = "D:\\dev\\skeletool\\results\\pablo_stretching\\20160628164245_rig100.00_lap0.045000_opt01_itr1500_fus0.05_pablo_stretching_o_std10_white_depth8___\\to_render\\ply_smoothed"
-	renderFolder = "D:\\dev\\skeletool\\results\\pablo_stretching\\20160628164245_rig100.00_lap0.045000_opt01_itr1500_fus0.05_pablo_stretching_o_std10_white_depth8___\\to_render\\ply_smoothed_tesselated_color"
-	# Material name for the imported object. The Material already needs to be created.
-	materialName = ""
-	# Amount of numbers in filepath, e.g., 000010.ply
-	AmountOfNumbers = 4 
-	# If we want to smooth + smooth shading in the mesh
-	MESH_SMOOTHING = True
-	# If show vertex color or geometry
-	USE_VERTEX_COLOR = True
-	# If render baseline
-	RENDER_BASELINE = False
-	RENDER_REFINED = True
-	
-	imageFrameBaseName = "not_set"
-	if(RENDER_BASELINE):
-		# Base name for the output PNG frames
-		imageFrameBaseName = "baseline."
-	else:
-		# Base name for the output PNG frames
-		imageFrameBaseName = "mesh_color."
-elif(SEQUENCE_TO_PROCESS == "Pablo_second"):
-	# Folder without ending "\\".
-	meshFolder = "D:\\dev\\skeletool\\results\\pablo_stretching_second\\20160705172133_rig100.00_lap0.045000_opt01_itr1500_fus0.05_pablo_stretching_o_std10_white_depth8___\\to_render\\ply_smooth_tesselated_color"
-	# baseline Mesh folder
-	meshFolder_baseline = "D:\\dev\\skeletool\\results\\pablo_stretching\\baseline\\ply_smoothed" 
-	# Output folder (without ending "\\").
-	renderFolder = "D:\\dev\\skeletool\\results\\pablo_stretching_second\\20160705172133_rig100.00_lap0.045000_opt01_itr1500_fus0.05_pablo_stretching_o_std10_white_depth8___\\to_render\\ply_smooth_tesselated_color"
-	# Material name for the imported object. The Material already needs to be created.
-	materialName = ""
-	# Amount of numbers in filepath, e.g., 000010.ply
-	AmountOfNumbers = 4 
-	# If we want to smooth + smooth shading in the mesh
-	MESH_SMOOTHING = True
-	# If show vertex color or geometry
-	USE_VERTEX_COLOR = False
-	# If render baseline
-	RENDER_BASELINE = False
-	RENDER_REFINED = True
-	
-	imageFrameBaseName = "not_set"
-	if(RENDER_BASELINE):
-		# Base name for the output PNG frames
-		imageFrameBaseName = "baseline."
-	else:
-		# Base name for the output PNG frames
-		imageFrameBaseName = "mesh_color."
-elif(SEQUENCE_TO_PROCESS == "skirt"):
-	# Folder without ending "\\".
-	meshFolder = "D:\\dev\\skeletool\\results\\with_depth7\\20160710171644_rig000.00_lap0.000500_opt01_itr1000_fus0.00_v3862_o_std10_SILHOUETTES_white_depth8___\\to_render\\ply_smoothed"
-	#meshFolder = "D:\\dev\\skeletool\\results\\with_depth7\\20160710171644_rig000.00_lap0.000500_opt01_itr1000_fus0.00_v3862_o_std10_SILHOUETTES_white_depth8___\\to_render\\ply_smoothed_tesselated_color"
-	
-	# baseline Mesh folder
-	meshFolder_baseline = "D:\\dev\\skeletool\\results\\pablo_stretching\\baseline\\ply_smoothed" 
-	# Output folder (without ending "\\").
-	renderFolder = "D:\\dev\\skeletool\\results\\with_depth7\\20160710171644_rig000.00_lap0.000500_opt01_itr1000_fus0.00_v3862_o_std10_SILHOUETTES_white_depth8___\\to_render\\ply_smoothed"
-	#renderFolder = "D:\\dev\\skeletool\\results\\with_depth7\\20160710171644_rig000.00_lap0.000500_opt01_itr1000_fus0.00_v3862_o_std10_SILHOUETTES_white_depth8___\\to_render\\ply_smoothed_tesselated_color"
-	# Material name for the imported object. The Material already needs to be created.
-	materialName = ""
-	# Amount of numbers in filepath, e.g., 000010.ply
-	AmountOfNumbers = 4 
-	# If we want to smooth + smooth shading in the mesh
-	MESH_SMOOTHING = False
-	# If show vertex color or geometry
-	USE_VERTEX_COLOR = False
-	# If render baseline
-	RENDER_BASELINE = False
-	RENDER_REFINED = True
-	
-	imageFrameBaseName = "not_set"
-	if(RENDER_BASELINE):
-		# Base name for the output PNG frames
-		imageFrameBaseName = "baseline."
-	else:
-		# Base name for the output PNG frames
-		imageFrameBaseName = "mesh_color."
 
 
 
 # Constants.
 M_PI = 3.1415926535897932
+
+def color_vertex(obj, vert, color):
+    """Paints a single vertex where vert is the index of the vertex
+    and color is a tuple with the RGB values."""
+
+    mesh = obj.data 
+    scn = bpy.context.scene
+
+    #check if our mesh already has Vertex Colors, and if not add some... (first we need to make sure it's the active object)
+    scn.objects.active = obj
+    obj.select = True
+    if mesh.vertex_colors:
+        vcol_layer = mesh.vertex_colors.active
+    else:
+        vcol_layer = mesh.vertex_colors.new()
+
+    for poly in mesh.polygons:
+        for loop_index in poly.loop_indices:
+            loop_vert_index = mesh.loops[loop_index].vertex_index
+            if vert == loop_vert_index:
+                vcol_layer.data[loop_index].color = color
+
+def color_vertex_all(obj, colors):
+	"""Paints a single vertex where vert is the index of the vertex
+	and color is a tuple with the RGB values."""
+	
+	mesh = obj.data 
+	scn = bpy.context.scene
+	
+	#check if our mesh already has Vertex Colors, and if not add some... (first we need to make sure it's the active object)
+	scn.objects.active = obj
+	obj.select = True
+	if mesh.vertex_colors:
+		vcol_layer = mesh.vertex_colors.active
+	else:
+		vcol_layer = mesh.vertex_colors.new()
+	
+	#for i in range(1,6890):
+	#	vcol_layer.data[i].color = colors[i,0:3]
+		
+	#obj.data.vertices
+	
+	for poly in mesh.polygons:
+		for loop_index in poly.loop_indices:
+			loop_vert_index = mesh.loops[loop_index].vertex_index
+			vcol_layer.data[loop_index].color = colors[loop_vert_index,0:3]
 
 # Helper.
 def Deg2Rad(degree):
@@ -238,8 +135,8 @@ def DeleteObject(object):
 def MeshPath(folder = "", frame = 0, fileEnding = ".obj", baseName = "", suffix = ""):
 	return folder + "/" + baseName + str(frame).zfill(AmountOfNumbers) + "" + fileEnding
 
-def RenderPath(folder = "", frame = 0, fileEnding = "png"):
-	return folder + "/" + imageFrameBaseName + str(frame).zfill(AmountOfNumbers) + "." + fileEnding
+def RenderPath(folder = "", frame = 0, fileEnding = "_acc_colormap_alpha.png"):
+	return folder + "/" + imageFrameBaseName + str(frame).zfill(AmountOfNumbers) + fileEnding
 
 def RenderSequence(startFrame = 0, endFrame = 1):
 	# Loop over the frames.
@@ -247,7 +144,7 @@ def RenderSequence(startFrame = 0, endFrame = 1):
 	
 		if(RENDER_REFINED):
 			# Import the object (Either obj or ply).
-			fullPathToMesh = MeshPath(folder = meshFolder, frame = currentFrame, fileEnding = "-SMPL.obj", baseName = "frame-")
+			fullPathToMesh = MeshPath(folder = meshFolder, frame = currentFrame, fileEnding = ".obj", baseName = "mesh.")
 			# bpy.ops.import_scene.obj(filepath = full_path_to_file)
 			print(fullPathToMesh)			
 			bpy.ops.import_scene.obj(filepath = fullPathToMesh)
@@ -329,10 +226,20 @@ def RenderSequence(startFrame = 0, endFrame = 1):
 			mat_id = importedObject.active_material_index
 			
 			if(USE_VERTEX_COLOR):
+			
+				# Loads vertex color file, expects a .txt of size [vertices x 3], with a color vertex per line
+				# Usually I generate these saving a numpy array
+				currentFrame_string = '{0:05d}'.format(currentFrame)
+				error_path = '/media/dan/data1/tmp/SMPL/results/2017_12_12/50002_autoencoder_results/eval_on_running_on_spot2/test_autoencoder_load_with_50/fix_errors/'
+				error_path = error_path + currentFrame_string + '_acceleration_colors.txt'
+				vertices_color = numpy.loadtxt(error_path)
+			
+				color_vertex_all(importedObject, vertices_color[:,0:3])
+			        
 				importedObject.data.materials[mat_id].use_object_color = True
 				importedObject.data.materials[mat_id].use_vertex_color_paint = True
-				importedObject.data.materials[mat_id].emit = 1.0
-				importedObject.data.materials[mat_id].diffuse_intensity = 0.0
+				importedObject.data.materials[mat_id].emit = 0.0
+				importedObject.data.materials[mat_id].diffuse_intensity = 1.0
 				importedObject.data.materials[mat_id].specular_intensity = 0.0
 			else:
 				importedObject.data.materials[mat_id].use_object_color = False
@@ -348,7 +255,7 @@ def RenderSequence(startFrame = 0, endFrame = 1):
 			
 			# Imports baselie mesh		
 			# Import the object (Either obj or ply).
-			fullPathToMesh = MeshPath(folder = meshFolder_baseline, frame = currentFrame, fileEnding = ".obj", baseName = "frame-")
+			fullPathToMesh = MeshPath(folder = meshFolder_baseline, frame = currentFrame, fileEnding = ".obj", baseName = "")
 			bpy.ops.import_scene.obj(filepath = fullPathToMesh)
 			# bpy.ops.import_mesh.ply(filepath = fullPathToMesh)
 
@@ -416,7 +323,7 @@ def RenderSequence(startFrame = 0, endFrame = 1):
 			
 		# Render the scene.
 		bpy.data.scenes['Scene'].render.filepath = RenderPath(folder = renderFolder, frame = currentFrame)
-		bpy.data.scenes['Scene'].render.resolution_percentage = 20
+		bpy.data.scenes['Scene'].render.resolution_percentage = 50
 		bpy.ops.render.render(write_still = True) 
 		
 		# change current frame
@@ -431,4 +338,4 @@ def RenderSequence(startFrame = 0, endFrame = 1):
 		
 
 # Run the script.
-RenderSequence(startFrame = 0, endFrame = 920)
+RenderSequence(startFrame = 1, endFrame = 540)
